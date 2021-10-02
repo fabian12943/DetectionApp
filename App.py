@@ -1,6 +1,8 @@
 import cv2
+import numpy as np
 from time import time
 
+from HandDetector import HandDetector
 from PoseDetector import PoseDetector
 
 
@@ -43,10 +45,15 @@ def main():
     prev_frame_time = 0
 
     pose_detector = PoseDetector(min_detection_confidence=0.8, min_tracking_confidence=0.8)
+    hand_detector = HandDetector(max_num_hands=4)
+
+    videoWriter = cv2.VideoWriter('MyOutput.avi',
+                                  cv2.VideoWriter_fourcc('I', '4', '2', '0'), 30, (1280, 720))
 
     while True:
         # Capture video input frame-by-frame
         success, image_bgr = cap.read()
+        image_output = np.zeros((App.config("CAP_HEIGHT"), App.config("CAP_WIDTH"), 3), np.uint8)
 
         # Check if frame was read correctly
         if not success:
@@ -55,12 +62,13 @@ def main():
 
         # Check frame for pose
         pose = pose_detector.process(image_bgr)
+        image_output = hand_detector.find_hands(image_bgr, image_output, draw=True)
 
         if pose is not None:
-            pose.draw_landmarks(image_bgr)
+            pose.draw_landmarks(image_output, display=True)
 
         # Flip the frame horizontally for natural (selfie-view) visualization
-        image_bgr = cv2.flip(image_bgr, 1)
+        image_output = cv2.flip(image_output, 1)
 
         if App.config("SHOW_FPS"):
             # Time of current processed frame
@@ -80,7 +88,8 @@ def main():
             prev_frame_time = curr_frame_time
 
         # Display the resulting frame
-        cv2.imshow("App", image_bgr)
+        # videoWriter.write(image_output)
+        cv2.imshow("App", image_output)
         if cv2.waitKey(1) == ord('q'):
             break
 
