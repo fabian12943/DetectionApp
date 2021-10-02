@@ -56,6 +56,9 @@ def main():
         # Check frame for pose
         pose = pose_detector.process(image_bgr)
 
+        if pose is not None:
+            pose.draw_landmarks(image_bgr)
+
         # Flip the frame horizontally for natural (selfie-view) visualization
         image_bgr = cv2.flip(image_bgr, 1)
 
