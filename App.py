@@ -1,6 +1,8 @@
 import cv2
 from time import time
 
+from PoseDetector import PoseDetector
+
 
 class App:
     def __init__(self):
@@ -40,6 +42,8 @@ def main():
     # Time of last processed frame
     prev_frame_time = 0
 
+    pose_detector = PoseDetector(min_detection_confidence=0.8, min_tracking_confidence=0.8)
+
     while True:
         # Capture video input frame-by-frame
         success, image_bgr = cap.read()
@@ -48,6 +52,9 @@ def main():
         if not success:
             print("Can't receive frame. Exiting...")
             break
+
+        # Check frame for pose
+        pose = pose_detector.process(image_bgr)
 
         # Flip the frame horizontally for natural (selfie-view) visualization
         image_bgr = cv2.flip(image_bgr, 1)
