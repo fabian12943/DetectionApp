@@ -45,10 +45,7 @@ def main():
     prev_frame_time = 0
 
     pose_detector = PoseDetector(min_detection_confidence=0.8, min_tracking_confidence=0.8)
-    hand_detector = HandDetector(max_num_hands=4)
-
-    videoWriter = cv2.VideoWriter('MyOutput.avi',
-                                  cv2.VideoWriter_fourcc('I', '4', '2', '0'), 30, (1280, 720))
+    hand_detector = HandDetector(min_detection_confidence=0.8, min_tracking_confidence=0.8, max_num_hands=4)
 
     while True:
         # Capture video input frame-by-frame
@@ -62,10 +59,12 @@ def main():
 
         # Check frame for pose
         pose = pose_detector.process(image_bgr)
-        image_output = hand_detector.find_hands(image_bgr, image_output, draw=True)
 
         if pose is not None:
             pose.draw_landmarks(image_output, display=True)
+
+        # Check frame for hands
+        hands = hand_detector.process(image_bgr)
 
         # Flip the frame horizontally for natural (selfie-view) visualization
         image_output = cv2.flip(image_output, 1)
