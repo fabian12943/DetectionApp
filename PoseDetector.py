@@ -31,7 +31,7 @@ class PoseDetector:
         if results.pose_landmarks:
             landmarks = []
             for _, landmark in enumerate(results.pose_landmarks.landmark):
-                height, width, _ = image.shape
+                height, width, _ = image_rgb.shape
                 cx, cy, cz = int(landmark.x * width), int(landmark.y * height), int(landmark.z * width)
                 landmarks.append({'cx': cx, 'cy': cy, 'cz': cz, 'visibility': landmark.visibility})
 
