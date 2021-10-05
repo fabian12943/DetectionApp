@@ -5,8 +5,6 @@ from PoseDetector import PoseDetector
 
 
 class App:
-    def __init__(self):
-        pass
 
     __conf = {
         "INPUT_LOCATION": 0,
